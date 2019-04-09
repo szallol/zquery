@@ -1,0 +1,19 @@
+[package]
+name = "zquery"
+version = "0.1.0"
+authors = ["Szallo Laszlo <szallol@gmail.com>"]
+edition = "2018"
+
+description = "command line query tool(SQL) for differrent data sources and destinations"
+
+[[bin]]
+name = "zq"
+path = "src/bin/main.rs"
+
+[lib]
+name = "zquery"
+path = "src/zquery.rs"
+
+[dependencies]
+clap = "2.33.0"
+rusqlite = "0.17.0"

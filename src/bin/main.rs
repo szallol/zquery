@@ -1,14 +1,13 @@
-extern crate rusqlite;
+extern crate clap;
+extern crate zquery;
 
-use rusqlite::types::ToSql;
-use rusqlite::{Connection, Result, NO_PARAMS};
+use clap::App;
+use zquery::ZQuery;
 
-
-fn main() -> Result<()> {
-    let conn = Connection::open_in_memory()?;
-
-    conn.execute("SELECT 2+2", NO_PARAMS);
-    println!("Hello, world!");
-
-    Ok(())
+fn main() {
+ App::new("zq")
+       .version("0.1.0")
+      .about("command line query tool(SQL) for differrent data sources and destinations")
+       .author("Szallo Laszlo")
+       .get_matches();
 }
