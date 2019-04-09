@@ -1,7 +1,7 @@
 extern crate clap;
 extern crate zquery;
 
-use clap::{Arg, App, SubCommand};
+use clap::{Arg, App};
 use zquery::ZQuery;
 
 fn main() {
@@ -15,8 +15,15 @@ fn main() {
          .value_name("INPUT")
          .help("Input source")
          .multiple(true)
+         .required(true)
          .takes_value(true))
      .get_matches();
 
-
+ match ZQuery::new(matches) {
+  Ok(zquery) => {
+   zquery.run();
+  },
+  Err(_) => {}
+ }
 }
+
