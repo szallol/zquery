@@ -17,3 +17,5 @@ path = "src/zquery.rs"
 [dependencies]
 clap = "2.33.0"
 rusqlite = "0.17.0"
+url = "1.7.2"
+log = "0.4.6"
