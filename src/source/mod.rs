@@ -2,13 +2,12 @@
 pub mod sqlite;
 pub use sqlite::ZqSqlite;
 
+pub mod manager;
+
 #[derive(PartialEq, Eq, Debug)]
-pub enum Error {
+pub enum ZqSourceError {
     InvalidUri
 }
 
 pub trait ZqSource {
-    fn new() -> Result<ZqSource, Error > {
-        Ok(Self{})
-    }
 }
