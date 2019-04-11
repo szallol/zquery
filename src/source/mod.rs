@@ -1,10 +1,14 @@
 
-pub mod source;
-//pub use self::source::ZqSource as ZqSource;
-
 pub mod sqlite;
 pub use sqlite::ZqSqlite;
 
-pub trait ZqSource {
+#[derive(PartialEq, Eq, Debug)]
+pub enum Error {
+    InvalidUri
+}
 
+pub trait ZqSource {
+    fn new() -> Result<ZqSource, Error > {
+        Ok(Self{})
+    }
 }

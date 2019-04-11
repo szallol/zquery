@@ -1,17 +1,10 @@
-use crate::source::ZqSource;
-use crate::misc::ZqErr;
-
+use rusqlite::types::ToSql;
+use rusqlite::{Connection, Result, NO_PARAMS};
 
 pub struct ZqSqlite {
 
 }
 
 impl  ZqSqlite {
-    pub fn new () -> Result<ZqSqlite, ZqErr> {
-        Ok(ZqSqlite{})
-    }
-}
-
-impl ZqSource for ZqSqlite {
 
 }
