@@ -1,21 +1,31 @@
 use url::{Url, ParseError};
 
-use crate::source::ZqSqlite;
-use crate::source::ZqSource;
+//use crate::source::ZqSqlite;
+use crate::source::{ZqSource, ZqSqlite};
 
-pub struct Manager<'a> {
-    pub inputs : Vec<&'a ZqSource>,
+pub struct Manager {
+    pub inputs : Vec<Box<dyn ZqSource>>,
 }
 
-impl<'a> Manager<'a> {
-    pub fn new () -> Manager<'a> {
+//struct ManagerBuilder {
+//    inputs : Vec<Box<dyn ZqSource>>,
+//}
+
+impl Manager {
+    pub fn new () -> Manager {
         let inputs = Vec::new();
         Manager{inputs}
     }
 
-    pub fn new_source(&'a mut self, source : String ) -> &'a mut Manager {
-//        let input_url = Url::parse(source);
-//        println! ("got url: {:?}", input_url);
-        self
+    pub fn add_source(&mut self, source : &str ) -> Result<& Manager, ParseError> {
+        let input_url = Url::parse(source)?;
+        match input_url.scheme() {
+           "xml" => {
+               self.inputs.push(Box::new(ZqSqlite::new(input_url)))
+           },
+            _ => {}
+        };
+        Ok(self)
     }
 }
+
