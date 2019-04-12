@@ -1,3 +1,6 @@
+extern crate log;
+extern crate env_logger;
+
 extern crate clap;
 extern crate zquery;
 
@@ -5,6 +8,8 @@ use clap::{Arg, App};
 use zquery::ZQuery;
 
 fn main() {
+ env_logger::init();
+
  let matches = App::new("zq")
      .version("0.1.0")
      .about("command line query tool(SQL) for different data sources and destinations")
