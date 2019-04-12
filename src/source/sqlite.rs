@@ -3,12 +3,13 @@ extern crate env_logger;
 
 use log::*;
 use rusqlite::types::ToSql;
-use rusqlite::{Connection, Result, NO_PARAMS};
+use rusqlite::{Connection, Result, NO_PARAMS, Error, ErrorCode};
 
-use url::{Url};
+use url::{Url, ParseError};
 //use crate::source::ZqSourceError;
 
 use crate::source::ZqSource;
+use std::path::Path;
 
 pub struct ZqSqlite {
     url : Url
@@ -22,7 +23,15 @@ impl ZqSqlite {
 }
 
 impl ZqSource for ZqSqlite {
-    fn import (&self) {
-        info!("SQLite imported from: {}", self.url.to_string());
+    fn import (&self)
+    {
+        let mut db_file = self.url.host_str().unwrap().to_owned();
+        let path = self.url.path();
+        db_file.push_str(path);
+        let db_file = db_file.to_string();
+        let db_file = Path::new(&db_file);
+
+//        let conn = Connection::open(db_file).unwrap_err();
+        info!("SQLite imported from: {:?}", db_file);
     }
 }

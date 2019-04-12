@@ -4,6 +4,7 @@ pub use sqlite::ZqSqlite;
 
 pub mod xml;
 pub use xml::ZqXml;
+use rusqlite::Error;
 
 pub mod manager;
 
