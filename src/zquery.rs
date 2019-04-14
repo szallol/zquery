@@ -1,14 +1,8 @@
 extern crate clap;
-
 use clap::{ArgMatches};
-use crate::source::{manager::Manager, ZqSource};
 
-pub use misc::ZqErr;
-
-pub use source::sqlite;
-
-mod misc;
-mod source;
+pub use crate::manager::Manager;
+pub use crate::errors::*;
 
 pub struct ZQuery<'a>{
     pub args : ArgMatches<'a>,
@@ -17,9 +11,9 @@ pub struct ZQuery<'a>{
 }
 
 impl<'a> ZQuery<'a> {
-    pub fn new(args : ArgMatches) -> Result <ZQuery, misc::ZqErr> {
+    pub fn new(args : ArgMatches) -> ZQuery {
         let input_mgr = Manager::new();
-        Ok (ZQuery {args, input_mgr})
+        ZQuery {args, input_mgr}
     }
 
     pub fn run(mut self)

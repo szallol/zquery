@@ -1,11 +1,19 @@
+#[macro_use] extern crate error_chain;
+
 extern crate log;
 extern crate env_logger;
 
 extern crate clap;
-extern crate zquery;
-
 use clap::{Arg, App};
-use zquery::ZQuery;
+
+mod errors;
+mod manager;
+mod zquery;
+mod source;
+mod sqlite;
+mod xml;
+pub use zquery::ZQuery;
+pub use errors::*;
 
 fn main() {
  env_logger::init();
@@ -24,11 +32,6 @@ fn main() {
          .takes_value(true))
      .get_matches();
 
- match ZQuery::new(matches) {
-  Ok(zquery) => {
-   zquery.run();
-  },
-  Err(_) => {}
- }
+ ZQuery::new(matches).run();
 }
 

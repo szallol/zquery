@@ -6,9 +6,8 @@ use rusqlite::types::ToSql;
 use rusqlite::{Connection, Result, NO_PARAMS, Error, ErrorCode};
 
 use url::{Url, ParseError};
-//use crate::source::ZqSourceError;
-
 use crate::source::ZqSource;
+
 use std::path::Path;
 
 pub struct ZqSqlite {

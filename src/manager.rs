@@ -1,7 +1,8 @@
 use url::{Url, ParseError};
 
-//use crate::source::ZqSqlite;
-use crate::source::{ZqSource, ZqSqlite, ZqXml};
+pub use crate::source::ZqSource;
+pub use crate::sqlite::ZqSqlite;
+pub use crate::xml::ZqXml;
 
 pub struct Manager{
     pub inputs : Vec<Box<dyn ZqSource>>,

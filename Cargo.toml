@@ -8,11 +8,7 @@ description = "command line query tool(SQL) for differrent data sources and dest
 
 [[bin]]
 name = "zq"
-path = "src/bin/main.rs"
-
-[lib]
-name = "zquery"
-path = "src/zquery.rs"
+path = "src/main.rs"
 
 [dependencies]
 clap = "2.33.0"
@@ -20,3 +16,4 @@ rusqlite = "0.17.0"
 url = "1.7.2"
 log = "0.4.6"
 env_logger = "0.6.1"
+error-chain = "0.12.0"
