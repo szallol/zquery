@@ -1,10 +1,9 @@
-use rusqlite::Error;
+//use rusqlite::Error;
 
-use crate::sqlite::ZqSqlite;
-use crate::xml::ZqXml;
 use crate::manager::ZqCore;
 
+pub use crate::errors::*;
 
 pub trait ZqSource {
-    fn import(&self, core : &mut ZqCore);
+    fn import(&self, core : &mut ZqCore) -> Result<()>;
 }

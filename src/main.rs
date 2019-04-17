@@ -16,7 +16,7 @@ mod zquery;
 pub use errors::*;
 pub use zquery::ZQuery;
 
-fn main() {
+fn main()  {
     env_logger::init();
 
     let matches = App::new("zq")
@@ -35,5 +35,23 @@ fn main() {
         )
         .get_matches();
 
-    ZQuery::new(matches).run();
+    if let Err(ref e) = ZQuery::new(matches).run() {
+        use std::io::Write;
+        let stderr = &mut ::std::io::stderr();
+        let errmsg = "Error writing to stderr";
+
+        writeln!(stderr, "error: {}", e).expect(errmsg);
+
+        for e in e.iter().skip(1) {
+            writeln!(stderr, "caused by: {}", e).expect(errmsg);
+        }
+
+        // The backtrace is not always generated. Try to run this example
+        // with `RUST_BACKTRACE=1`.
+        if let Some(backtrace) = e.backtrace() {
+            writeln!(stderr, "backtrace: {:?}", backtrace).expect(errmsg);
+        }
+
+        ::std::process::exit(1);
+    }
 }

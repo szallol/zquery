@@ -2,9 +2,9 @@ extern crate env_logger;
 extern crate log;
 
 use log::*;
-
 use url::Url;
 
+pub use crate::errors::*;
 use crate::source::ZqSource;
 use crate::manager::ZqCore;
 
@@ -20,7 +20,8 @@ impl ZqXml {
 }
 
 impl ZqSource for ZqXml {
-    fn import(&self, core: &mut ZqCore) {
+    fn import(&self, _core: &mut ZqCore) -> Result<()> {
         info!("xml imported from: {}", self.url.to_string());
+        Ok(())
     }
 }
