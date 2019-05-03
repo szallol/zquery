@@ -1,17 +1,11 @@
-use url;
-use rusqlite;
+pub type Result<T> = std::result::Result<T, ZqError>;
 
 #[derive(Debug, Fail)]
-pub enum Error {
+pub enum ZqError {
 	#[fail(display = "Failed to parse resource URI")]
-	UrlParse(#[cause] url::ParseError),
+	UrlParse(#[cause] ::url::ParseError),
 
 	#[fail(display = "RuSqlite error")]
-	RuSqite(#[cause] rusqlite::Error ),
+	RuSqlite(#[cause] rusqlite::Error ),
 }
-//error_chain! {
-//    foreign_links {
-//        UrlParse(url::ParseError);
-//        Rusqlite(rusqlite::Error);
-//    }
-//}
+

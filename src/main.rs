@@ -13,6 +13,7 @@ mod source;
 mod sqlite;
 mod xml;
 mod zquery;
+
 pub use errors::*;
 pub use zquery::ZQuery;
 

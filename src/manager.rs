@@ -17,8 +17,9 @@ impl Manager {
         Manager { inputs }
     }
 
-    pub fn add_source(&mut self, source: &str) -> Result<&Manager, Error> {
-        let input_url = Url::parse(source)?;
+    pub fn add_source(&mut self, source: &str) -> Result<&Manager> {
+
+        let input_url = Url::parse(source).map_err(ZqError::UrlParse)?;
         match input_url.scheme() {
             "sqlite" => {
                 let new_source = Box::new(ZqSqlite::new(input_url));

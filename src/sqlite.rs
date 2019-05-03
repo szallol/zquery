@@ -23,14 +23,14 @@ impl ZqSqlite {
 }
 
 impl ZqSource for ZqSqlite {
-    fn import(&self, _core : &mut ZqCore) -> Result<(), Error> {
+    fn import(&self, _core : &mut ZqCore) -> Result<()> {
         let mut db_file = self.url.host_str().unwrap().to_owned();
         let path = self.url.path();
         db_file.push_str(path);
         let db_file = db_file.to_string();
         let db_file = Path::new(&db_file);
 
-        let _conn = Connection::open(db_file)?;
+        let _conn = Connection::open(db_file).map_err(ZqError::RuSqlite)?;
         info!("SQLite imported from: {:?}", db_file);
         Ok(())
     }
