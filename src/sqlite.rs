@@ -23,7 +23,7 @@ impl ZqSqlite {
 }
 
 impl ZqSource for ZqSqlite {
-    fn import(&self, _core : &mut ZqCore) -> Result<()> {
+    fn import(&self, _core : &mut ZqCore) -> Result<(), Error> {
         let mut db_file = self.url.host_str().unwrap().to_owned();
         let path = self.url.path();
         db_file.push_str(path);

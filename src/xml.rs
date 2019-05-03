@@ -20,7 +20,7 @@ impl ZqXml {
 }
 
 impl ZqSource for ZqXml {
-    fn import(&self, _core: &mut ZqCore) -> Result<()> {
+    fn import(&self, _core: &mut ZqCore) -> Result<(), Error> {
         info!("xml imported from: {}", self.url.to_string());
         Ok(())
     }

@@ -17,7 +17,7 @@ impl Manager {
         Manager { inputs }
     }
 
-    pub fn add_source(&mut self, source: &str) -> Result<&Manager> {
+    pub fn add_source(&mut self, source: &str) -> Result<&Manager, Error> {
         let input_url = Url::parse(source)?;
         match input_url.scheme() {
             "sqlite" => {

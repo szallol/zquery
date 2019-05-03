@@ -16,7 +16,7 @@ impl<'a> ZQuery<'a> {
         ZQuery { args, input_mgr }
     }
 
-    pub fn run(mut self) -> Result<()> {
+    pub fn run(mut self) -> Result<(), Error> {
         let input_values = self.args.values_of("input").unwrap();
         for input in input_values {
             self.input_mgr.add_source(input)?;
