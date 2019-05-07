@@ -1,15 +1,18 @@
 extern crate env_logger;
 extern crate log;
 
-pub use crate::errors::*;
-
-use log::*;
-use rusqlite::{Connection};
-
+use crate::errors::*;
 use crate::source::ZqSource;
 use crate::manager::ZqCore;
+
+//use rusqlite::types::ToSql;
+use rusqlite::{Connection, NO_PARAMS};
+
+use log::*;
+
 use url::Url;
 use std::path::Path;
+
 
 pub struct ZqSqlite {
     url: Url,

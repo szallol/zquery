@@ -17,7 +17,7 @@ mod zquery;
 pub use errors::*;
 pub use zquery::ZQuery;
 
-fn main()  {
+fn main() -> Result<()>  {
     env_logger::init();
 
     let matches = App::new("zq")
@@ -36,7 +36,9 @@ fn main()  {
         )
         .get_matches();
 
-    if let Err(ref e) = ZQuery::new(matches).run() {
+    if let Err(ref e) = ZQuery::new(matches)?.run() {
         println!("{}", e);
     }
+
+    Ok(())
 }

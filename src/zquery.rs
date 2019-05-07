@@ -11,9 +11,9 @@ pub struct ZQuery<'a> {
 }
 
 impl<'a> ZQuery<'a> {
-    pub fn new(args: ArgMatches) -> ZQuery {
-        let input_mgr = Manager::new();
-        ZQuery { args, input_mgr }
+    pub fn new(args: ArgMatches) -> Result<ZQuery> {
+        let input_mgr = Manager::new()?;
+        Ok(ZQuery { args, input_mgr })
     }
 
     pub fn run(mut self) -> Result<()> {

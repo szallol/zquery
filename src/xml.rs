@@ -1,10 +1,16 @@
 extern crate env_logger;
 extern crate log;
+extern crate xml;
 
 use log::*;
 use url::Url;
 
-pub use crate::errors::*;
+use std::fs::File;
+use std::io::BufReader;
+
+use xml::reader::{EventReader, XmlEvent};
+
+use crate::errors::*;
 use crate::source::ZqSource;
 use crate::manager::ZqCore;
 
@@ -21,6 +27,7 @@ impl ZqXml {
 
 impl ZqSource for ZqXml {
     fn import(&self, _core: &mut ZqCore) -> Result<()> {
+
         info!("xml imported from: {}", self.url.to_string());
         Ok(())
     }

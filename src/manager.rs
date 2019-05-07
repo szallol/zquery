@@ -1,5 +1,7 @@
 use url::Url;
 
+use rusqlite::{Connection, ToSql, NO_PARAMS};
+
 pub use crate::errors::*;
 
 pub use crate::source::ZqSource;
@@ -9,12 +11,14 @@ use core::borrow::BorrowMut;
 
 pub struct Manager {
     pub inputs: Vec<Box<dyn ZqSource>>,
+    conn : rusqlite::Connection,
 }
 
 impl Manager {
-    pub fn new() -> Manager {
+    pub fn new() -> Result<Manager> {
         let inputs = Vec::new();
-        Manager { inputs }
+        let conn = Connection::open_in_memory().map_err(ZqError::RuSqlite)?;
+        Ok(Manager { inputs, conn })
     }
 
     pub fn add_source(&mut self, source: &str) -> Result<&Manager> {
@@ -37,8 +41,14 @@ impl Manager {
     }
 }
 
-pub trait ZqCore {}
+pub trait ZqCore {
+    fn execute_query(&self, query : &str) -> Result<()>;
+}
 
 impl ZqCore for Manager {
-
+    fn execute_query(&self, query : &str) -> Result<()>
+    {
+        self.conn.execute(query, NO_PARAMS).map_err(ZqError::RuSqlite)?;
+        Ok(())
+    }
 }
