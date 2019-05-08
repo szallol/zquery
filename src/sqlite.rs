@@ -6,7 +6,7 @@ use crate::source::ZqSource;
 use crate::manager::ZqCore;
 
 //use rusqlite::types::ToSql;
-use rusqlite::{Connection, NO_PARAMS};
+use rusqlite::{Connection};
 
 use log::*;
 
