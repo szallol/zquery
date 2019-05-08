@@ -42,13 +42,13 @@ impl Manager {
 }
 
 pub trait ZqCore {
-    fn execute_query(&self, query : &str) -> Result<()>;
+    fn execute_query(&self, query : &str, params: &[(&dyn ToSql)]) -> Result<()>;
 }
 
 impl ZqCore for Manager {
-    fn execute_query(&self, query : &str) -> Result<()>
+    fn execute_query(&self, query : &str, params: &[(&dyn ToSql)]) -> Result<()>
     {
-        self.conn.execute(query, NO_PARAMS).map_err(ZqError::RuSqlite)?;
+        self.conn.execute(query, params).map_err(ZqError::RuSqlite)?;
         Ok(())
     }
 }
