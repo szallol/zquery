@@ -27,34 +27,34 @@ impl ZqXml {
 
 impl ZqSource for ZqXml {
     fn import(&self, core: &mut ZqCore) -> Result<()> {
-        let tmpColumns=  vec![
-            ZqColumn::new ("coll1".to_string(), "INTEGER".to_string())?,
-            ZqColumn::new ("coll2".to_string(), "INTEGER".to_string())?, ];
+        let tmp_columns =  vec![
+            ZqColumn::new ("coll1", "INTEGER")?,
+            ZqColumn::new ("coll2", "INTEGER")?];
 
-        core.create_table(&ZqTable::new("tmpTable".to_string(), tmpColumns)?)?;
+        core.create_table(&ZqTable::new("tmpTable", tmp_columns)?)?;
 
         let file = self.url.host_str().unwrap();
         let file = format!("{}{}", file, self.url.path());
         let file = File::open(file).map_err(ZqError::IOError)?;
         let file = BufReader::new(file);
 
-        let parser = EventReader::new(file);
-        let mut depth = 0;
-        for e in parser {
-            match e {
-                Ok(XmlEvent::StartElement{name, ..}) => {
-                    info!("{}", name);
-                }
-                Ok(XmlEvent::EndElement{name, ..}) => {
-                    info!("{}", name);
-                }
-                Err(e) => {
-                println!("Error: {}", e);
-                break;
-                }
-                _ => {}
-            }
-        }
+//        let parser = EventReader::new(file);
+//        let mut _depth = 0;
+//        for e in parser {
+//            match e {
+//                Ok(XmlEvent::StartElement{name, ..}) => {
+//                    info!("{}", name);
+//                }
+//                Ok(XmlEvent::EndElement{name, ..}) => {
+//                    info!("{}", name);
+//                }
+//                Err(e) => {
+//                println!("Error: {}", e);
+//                break;
+//                }
+//                _ => {}
+//            }
+//        }
 //        info!("xml imported from: {:?}", self.url.host_str()? +  self.url.path());
 //        info!("xml imported from: {:?}", parser);
         Ok(())

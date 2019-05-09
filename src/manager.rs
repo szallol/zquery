@@ -1,4 +1,5 @@
 use url::Url;
+use log::*;
 
 use rusqlite::{Connection, ToSql, NO_PARAMS};
 
@@ -41,33 +42,40 @@ impl Manager {
     }
 }
 
-pub struct ZqColumn {
-    name : String,
-    sqltype : String,
+pub struct ZqColumn<'a> {
+    name : &'a str,
+    sql_type: &'a str,
 }
 
-impl ZqColumn {
-    pub fn new (name : String, sqltype : String) -> Result<ZqColumn> {
-       Ok(ZqColumn{name, sqltype})
+impl<'a> ZqColumn<'a> {
+    pub fn new (name : &'a str, sqltype : &'a str) -> Result<ZqColumn<'a>> {
+       Ok(ZqColumn{name, sql_type: sqltype })
+    }
+
+    pub fn name(&self) -> Result<&'a str> {
+        Ok(self.name)
+    }
+
+    pub fn sql_type(&self) -> Result<&'a str> {
+        Ok(self.sql_type)
     }
 }
 
-pub struct ZqTable {
-    pub name : String,
-    pub columns: Vec<ZqColumn>,
+pub struct ZqTable<'a> {
+     name : &'a str,
+     columns: Vec<ZqColumn<'a>>,
 }
 
-impl ZqTable {
-   pub fn new(name : String, columns : Vec<ZqColumn>)  -> Result<ZqTable> {
-      Ok( ZqTable{name, columns})
-   }
+impl<'a> ZqTable<'a> {
+    pub fn new(name : &'a str, columns : Vec<ZqColumn<'a>>)  -> Result<ZqTable<'a>> {
+        Ok( ZqTable{name, columns})
+    }
 
-    pub fn name(self) -> Result<String> {
+    pub fn name(&self) -> Result<&'a str> {
        Ok(self.name)
     }
-
-    pub fn columns(self) -> Result<Vec<ZqColumn>> {
-        Ok(self.columns)
+    pub fn columns(&self) -> Result<&Vec<ZqColumn>> {
+        Ok(&self.columns)
     }
 }
 
@@ -84,18 +92,20 @@ impl ZqCore for Manager {
     }
 
     fn create_table(&self, table : &ZqTable) -> Result<()> {
-        let tableName = table.name()?;
-        let query = format!("CREATE TABLE {}", tableName);
-        table.columns().iter().for_each(|el| {
+        let table_name = table.name()?;
+        let mut query = format!("CREATE TABLE {}", table_name);
+        let mut columns_query = String::from("(");
+        if let Some ((last, elements)) = table.columns()?.split_last() {
+            elements.into_iter().for_each(|column| {
+                columns_query.push_str(&format!("{} {}, ", column.name, column.sql_type));
+            });
 
-        });
-//        self.conn.execute("CREATE TABLE ?1 (
-//            id              INTEGER PRIMARY KEY,
-//        name            TEXT NOT NULL,
-//        time_created    TEXT NOT NULL,
-//        data            BLOB
-//        )",
-//                          NO_PARAMS).unwrap(); //map_err(ZqError::RuSqlite)?;
+            columns_query.push_str(&format!("{} {})", last.name, last.sql_type));
+        }
+
+        query.push_str(&columns_query);
+        info!("{:?}", &query);
+        self.conn.execute(&query, NO_PARAMS).unwrap();
 
         Ok(())
     }
