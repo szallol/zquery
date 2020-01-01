@@ -1,7 +1,3 @@
-extern crate env_logger;
-extern crate log;
-extern crate xml;
-
 use log::*;
 use url::Url;
 
@@ -26,7 +22,7 @@ impl ZqXml {
 }
 
 impl ZqSource for ZqXml {
-    fn import(&self, core: &mut ZqCore) -> Result<()> {
+    fn import(&self, core: &mut dyn ZqCore) -> Result<()> {
         let tmp_columns =  vec![
             ZqColumn::new ("coll1", "INTEGER")?,
             ZqColumn::new ("coll2", "INTEGER")?];
@@ -36,7 +32,7 @@ impl ZqSource for ZqXml {
         let file = self.url.host_str().unwrap();
         let file = format!("{}{}", file, self.url.path());
         let file = File::open(file).map_err(ZqError::IOError)?;
-        let file = BufReader::new(file);
+        let _file = BufReader::new(file);
 
 //        let parser = EventReader::new(file);
 //        let mut _depth = 0;

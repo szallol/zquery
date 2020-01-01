@@ -1,3 +1,4 @@
+
 use url::Url;
 use log::*;
 
@@ -6,8 +7,9 @@ use rusqlite::{Connection, ToSql, NO_PARAMS};
 pub use crate::errors::*;
 
 pub use crate::source::ZqSource;
-pub use crate::sqlite::ZqSqlite;
-pub use crate::xml::ZqXml;
+pub use crate::source::sqlite::ZqSqlite;
+pub use crate::source::xml::ZqXml;
+
 use core::borrow::BorrowMut;
 
 pub struct Manager {
@@ -23,7 +25,6 @@ impl Manager {
     }
 
     pub fn add_source(&mut self, source: &str) -> Result<&Manager> {
-
         let input_url = Url::parse(source).map_err(ZqError::UrlParse)?;
         match input_url.scheme() {
             "sqlite" => {
@@ -52,10 +53,12 @@ impl<'a> ZqColumn<'a> {
        Ok(ZqColumn{name, sql_type: sqltype })
     }
 
+    #[allow(dead_code)]
     pub fn name(&self) -> Result<&'a str> {
         Ok(self.name)
     }
 
+    #[allow(dead_code)]
     pub fn sql_type(&self) -> Result<&'a str> {
         Ok(self.sql_type)
     }
@@ -80,12 +83,12 @@ impl<'a> ZqTable<'a> {
 }
 
 pub trait ZqCore {
-    fn execute_query(&self, query : &str, params: &[(&dyn ToSql)]) -> Result<()>;
+    fn execute_query(&self, query : &str, params: &[&dyn ToSql]) -> Result<()>;
     fn create_table(&self, table : &ZqTable) -> Result<()>;
 }
 
 impl ZqCore for Manager {
-    fn execute_query(&self, query : &str, params: &[(&dyn ToSql)]) -> Result<()>
+    fn execute_query(&self, query : &str, params: &[&dyn ToSql]) -> Result<()>
     {
         self.conn.execute(query, params).map_err(ZqError::RuSqlite)?;
         Ok(())

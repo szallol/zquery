@@ -1,4 +1,3 @@
-extern crate clap;
 use clap::ArgMatches;
 
 pub use crate::errors::*;

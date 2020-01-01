@@ -1,28 +1,22 @@
 #[macro_use]
 extern crate failure;
 
-extern crate env_logger;
-extern crate log;
-
-extern crate clap;
 use clap::{App, Arg};
 
 mod errors;
-mod manager;
 mod source;
-mod sqlite;
-mod xml;
+mod manager;
 mod zquery;
 
 pub use errors::*;
-pub use zquery::ZQuery;
+use zquery::ZQuery;
 
 fn main() -> Result<()>  {
     env_logger::init();
 
     let matches = App::new("zq")
         .version("0.1.0")
-        .about("command line query tool(SQL) for different data sources and destinations")
+        .about("query tool(SQL) for different data sources and destinations")
         .author("Szallo L. <szallol@gmail.com>")
         .arg(
             Arg::with_name("input")
