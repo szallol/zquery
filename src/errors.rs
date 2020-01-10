@@ -1,15 +1,32 @@
+use std::io;
+use failure::{Backtrace, Fail};
+
 pub type Result<T> = std::result::Result<T, ZqError>;
 
 #[derive(Debug, Fail)]
 pub enum ZqError {
-	#[fail(display = "Failed to parse resource URI")]
-	UrlParse(#[cause] url::ParseError),
+    #[fail(display = "{}", message)]
+    GeneralError {message : String},
 
-	#[fail(display = "RuSqlite error")]
-	RuSqlite(#[cause] rusqlite::Error ),
+    #[fail(display = "{}", message)]
+    ParseError {message : String},
 
-	#[fail(display = "IO Error")]
-	IOError(#[cause] std::io::Error),
+    #[fail(display = "{}", message)]
+    QueryError {message : String},
 
+    #[fail(display = "{}", message)]
+    IoError {
+        message: String,
+        backtrace: Backtrace,
+        #[cause]
+        cause: io::Error,
+    },
+
+    #[fail(display = "{}", message)]
+    SqLiteError {
+        message: String,
+        backtrace: Backtrace,
+        #[cause]
+        cause: rusqlite::Error,
+    },
 }
-

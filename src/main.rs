@@ -4,14 +4,14 @@ extern crate failure;
 use clap::{App, Arg};
 
 mod errors;
-mod source;
 mod manager;
+mod source;
 mod zquery;
 
 pub use errors::*;
 use zquery::ZQuery;
 
-fn main() -> Result<()>  {
+fn main() -> Result<()> {
     env_logger::init();
 
     let matches = App::new("zq")
