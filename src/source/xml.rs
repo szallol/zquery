@@ -29,8 +29,6 @@ impl ZqSource for ZqXml {
             ZqColumn::new("coll2", "INTEGER")?,
         ];
 
-        tmp_columns.push(ZqColumn::new("coll2", "INTEGER")?);
-
         core.create_table(&ZqTable::new("tmpTable", tmp_columns)?)?;
 
         let file = self.url.host_str().unwrap();

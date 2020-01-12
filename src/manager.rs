@@ -131,7 +131,7 @@ impl ZqCore for Manager {
         info!("{:?}", &query);
 
         self.conn.execute(&query, NO_PARAMS).map_err(|_| {
-            ZqError::QueryError {message : String::from("Failed t execute query")}
+            ZqError::QueryError {message : String::from("Failed to execute query")}
         })?;
 
         Ok(())

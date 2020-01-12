@@ -12,7 +12,7 @@ pub use errors::*;
 use zquery::ZQuery;
 
 fn main() -> Result<()> {
-    env_logger::init();
+    simple_logger::init();
 
     let matches = App::new("zq")
         .version("0.1.0")
