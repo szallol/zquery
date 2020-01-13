@@ -31,9 +31,9 @@ fn main() -> Result<()> {
         )
         .get_matches();
 
-    if let Err(ref e) = ZQuery::new(matches).run() {
+    ZQuery::new(matches).unwrap().run().map_err (|e : ZqError| {
         println!("{}", e);
-    }
+    });
 
     Ok(())
 }

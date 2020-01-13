@@ -7,10 +7,10 @@ pub struct ZqColumn<'a> {
 
 impl<'a> ZqColumn<'a> {
     pub fn new(name: &'a str, sqltype: &'a str) -> Self {
-        Ok(ZqColumn {
+        ZqColumn {
             name,
             sql_type: sqltype,
-        })
+        }
     }
 
     #[allow(dead_code)]

@@ -8,7 +8,7 @@ pub struct ZqTable<'a> {
 
 impl<'a> ZqTable<'a> {
     pub fn new(name: &'a str, columns: Vec<ZqColumn<'a>>) -> Self {
-        Ok(ZqTable { name, columns })
+       ZqTable { name, columns }
     }
 
     pub fn name(&self) -> Result<&'a str, ZqError> {
@@ -16,6 +16,6 @@ impl<'a> ZqTable<'a> {
     }
 
     pub fn columns(&self) -> Result<&Vec<ZqColumn>, ZqError> {
-        Ok(&self.columns, ())
+        Ok(&self.columns)
     }
 }

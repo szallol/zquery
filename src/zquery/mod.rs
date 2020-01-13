@@ -19,13 +19,13 @@ pub trait ZqCore {
 }
 
 pub struct ZQuery<'a> {
-    pub args: ArgMatches<'a>,
+    pub args: ArgMatches<'a>, 
     pub inputs: Vec<Box<dyn ZqSource>>,
     conn: rusqlite::Connection,
 }
 
-impl ZQuery<'_> {
-    pub fn new(args: ArgMatches) -> Self {
+impl<'a> ZQuery<'a> {
+    pub fn new(args: ArgMatches<'a>) -> Result<Self> {
         let inputs = Vec::new();
 //        let conn = Connection::open_in_memory().map_err(ZqError::RuSqlite)?;
         let conn = Connection::open(Path::new("tmpdb.db")).map_err(|e : rusqlite::Error|
@@ -38,17 +38,16 @@ impl ZQuery<'_> {
         Ok(ZQuery {args, inputs, conn })
     }
 
-    pub fn run(mut self) -> Result<()> {
+    pub fn run(&mut self) -> Result<()> {
         let input_values = self.args.values_of("input").unwrap();
         for input in input_values {
-            match self.input_mgr.add_source(input) {
-                Err(err) => {
-                    error!("Failed to load input {} : {}", input, err);
-                }
-                _ => {
-                }
-            }
-
+            // match self.add_source(input) {
+            //     Err(err) => {
+            //         error!("Failed to load input {} : {}", input, err);
+            //     }
+            //     _ => {
+            //     }
+            // }
         }
 
         Ok(())
@@ -97,10 +96,10 @@ impl ZqCore for ZQuery<'_>{
         let mut columns_query = String::from("(");
         if let Some((last, elements)) = table.columns()?.split_last() {
             elements.into_iter().for_each(|column| {
-                columns_query.push_str(&format!("{} {}, ", column.name, column.sql_type));
+                columns_query.push_str(&format!("{} {}, ", column.name().unwrap(), column.sql_type().unwrap()));
             });
 
-            columns_query.push_str(&format!("{} {})", last.name, last.sql_type));
+            columns_query.push_str(&format!("{} {})", last.name()?, last.sql_type()?));
         }
 
         query.push_str(&columns_query);

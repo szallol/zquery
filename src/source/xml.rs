@@ -8,7 +8,7 @@ use std::collections::HashMap;
 
 use xml::reader::{EventReader, XmlEvent};
 
-use crate::errors::*;
+use crate::errors::ZqError;
 
 use crate::zquery::column::*;
 use crate::zquery:: {ZqCore, column::*, table::*};
@@ -27,13 +27,13 @@ impl ZqXml {
 }
 
 impl ZqSource for ZqXml {
-    fn import(&self, core: &mut dyn ZqCore) -> Result<()> {
+    fn import(&self, core: &mut dyn ZqCore) -> Result<(), ZqError> {
         //
         let mut tmp_columns = vec![
-            ZqColumn::new("id", "INTEGER PRIMARY KEY AUTOINCREMENT")?,
+            ZqColumn::new("id", "INTEGER PRIMARY KEY AUTOINCREMENT"),
         ];
 
-        core.create_table(&ZqTable::new("tmpTable", tmp_columns)?)?;
+        core.create_table(&ZqTable::new("tmpTable", tmp_columns))?;
 
         let file = self.url.host_str().unwrap();
         let file = format!("{}{}", file, self.url.path());
