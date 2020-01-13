@@ -1,25 +1,31 @@
 use log::*;
+use clap::ArgMatches;
 use url::Url;
 use failure::{Backtrace};
-
 use rusqlite::{Connection, ToSql, NO_PARAMS};
-
-pub use crate::errors::*;
-
-pub use crate::source::sqlite::ZqSqlite;
-pub use crate::source::xml::ZqXml;
-pub use crate::source::ZqSource;
-
 use core::borrow::BorrowMut;
 use std::path::Path;
 
-pub struct Manager {
+pub mod column;
+pub mod table;
+
+use crate::errors::*;
+use crate::source::{ZqSource, xml::ZqXml, sqlite::ZqSqlite};
+use crate::zquery::{table::*};
+
+pub trait ZqCore {
+    fn execute_query(&self, query: &str, params: &[&dyn ToSql]) -> Result<()>;
+    fn create_table(&self, table: &ZqTable) -> Result<()>;
+}
+
+pub struct ZQuery<'a> {
+    pub args: ArgMatches<'a>,
     pub inputs: Vec<Box<dyn ZqSource>>,
     conn: rusqlite::Connection,
 }
 
-impl Manager {
-    pub fn new() -> Result<Manager> {
+impl ZQuery<'_> {
+    pub fn new(args: ArgMatches) -> Self {
         let inputs = Vec::new();
 //        let conn = Connection::open_in_memory().map_err(ZqError::RuSqlite)?;
         let conn = Connection::open(Path::new("tmpdb.db")).map_err(|e : rusqlite::Error|
@@ -29,10 +35,26 @@ impl Manager {
                 cause: e
             })?;
 
-        Ok(Manager { inputs, conn })
+        Ok(ZQuery {args, inputs, conn })
     }
 
-    pub fn add_source(&mut self, source: &str) -> Result<&Manager> {
+    pub fn run(mut self) -> Result<()> {
+        let input_values = self.args.values_of("input").unwrap();
+        for input in input_values {
+            match self.input_mgr.add_source(input) {
+                Err(err) => {
+                    error!("Failed to load input {} : {}", input, err);
+                }
+                _ => {
+                }
+            }
+
+        }
+
+        Ok(())
+    }
+
+    pub fn add_source(&mut self, source: &str) -> Result<()> {
         let input_url = Url::parse(source).map_err(|_|
             ZqError::ParseError {message : String::from("Failed to parse source url")}
         )?;
@@ -50,58 +72,12 @@ impl Manager {
             }
             _ => {}
         };
-        Ok(self)
+        Ok(())
     }
+
 }
 
-pub struct ZqColumn<'a> {
-    name: &'a str,
-    sql_type: &'a str,
-}
-
-impl<'a> ZqColumn<'a> {
-    pub fn new(name: &'a str, sqltype: &'a str) -> Result<ZqColumn<'a>> {
-        Ok(ZqColumn {
-            name,
-            sql_type: sqltype,
-        })
-    }
-
-    #[allow(dead_code)]
-    pub fn name(&self) -> Result<&'a str> {
-        Ok(self.name)
-    }
-
-    #[allow(dead_code)]
-    pub fn sql_type(&self) -> Result<&'a str> {
-        Ok(self.sql_type)
-    }
-}
-
-pub struct ZqTable<'a> {
-    name: &'a str,
-    columns: Vec<ZqColumn<'a>>,
-}
-
-impl<'a> ZqTable<'a> {
-    pub fn new(name: &'a str, columns: Vec<ZqColumn<'a>>) -> Result<ZqTable<'a>> {
-        Ok(ZqTable { name, columns })
-    }
-
-    pub fn name(&self) -> Result<&'a str> {
-        Ok(self.name)
-    }
-    pub fn columns(&self) -> Result<&Vec<ZqColumn>> {
-        Ok(&self.columns)
-    }
-}
-
-pub trait ZqCore {
-    fn execute_query(&self, query: &str, params: &[&dyn ToSql]) -> Result<()>;
-    fn create_table(&self, table: &ZqTable) -> Result<()>;
-}
-
-impl ZqCore for Manager {
+impl ZqCore for ZQuery<'_>{
     fn execute_query(&self, query: &str, params: &[&dyn ToSql]) -> Result<()> {
         self.conn
             .execute(query, params)

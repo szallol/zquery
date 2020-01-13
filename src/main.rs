@@ -4,7 +4,6 @@ extern crate failure;
 use clap::{App, Arg};
 
 mod errors;
-mod manager;
 mod source;
 mod zquery;
 
@@ -12,7 +11,9 @@ pub use errors::*;
 use zquery::ZQuery;
 
 fn main() -> Result<()> {
-    simple_logger::init();
+    let _logger = simple_logger::init().map_err(|_|
+                                            println!("Failed to init log system.")
+    );
 
     let matches = App::new("zq")
         .version("0.1.0")
@@ -30,7 +31,7 @@ fn main() -> Result<()> {
         )
         .get_matches();
 
-    if let Err(ref e) = ZQuery::new(matches)?.run() {
+    if let Err(ref e) = ZQuery::new(matches).run() {
         println!("{}", e);
     }
 

@@ -1,5 +1,5 @@
 use crate::errors::*;
-use crate::manager::ZqCore;
+use crate::zquery::{ZqCore};
 
 pub mod sqlite;
 pub mod xml;

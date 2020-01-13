@@ -1,13 +1,11 @@
 use crate::errors::*;
-
-use crate::manager::ZqCore;
 use crate::source::ZqSource;
+use crate::zquery::{ZQuery, ZqCore};
 
 //use rusqlite::types::ToSql;
 use rusqlite::Connection;
 
 use log::*;
-
 use std::path::Path;
 use url::Url;
 
