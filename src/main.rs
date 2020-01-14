@@ -11,9 +11,7 @@ pub use errors::*;
 use zquery::ZQuery;
 
 fn main() -> Result<()> {
-    let _logger = simple_logger::init().map_err(|_|
-                                            println!("Failed to init log system.")
-    );
+    let _logger = simple_logger::init().map_err(|_| println!("Failed to init log system."));
 
     let matches = App::new("zq")
         .version("0.1.0")
@@ -31,7 +29,7 @@ fn main() -> Result<()> {
         )
         .get_matches();
 
-    ZQuery::new(matches).unwrap().run().map_err (|e : ZqError| {
+    ZQuery::new(matches).unwrap().run().map_err(|e: ZqError| {
         println!("{}", e);
     });
 

@@ -1,18 +1,18 @@
-use std::io;
 use failure::{Backtrace, Fail};
+use std::io;
 
 pub type Result<T> = std::result::Result<T, ZqError>;
 
 #[derive(Debug, Fail)]
 pub enum ZqError {
     #[fail(display = "{}", message)]
-    GeneralError {message : String},
+    GeneralError { message: String },
 
     #[fail(display = "{}", message)]
-    ParseError {message : String},
+    ParseError { message: String },
 
     #[fail(display = "{}", message)]
-    QueryError {message : String},
+    QueryError { message: String },
 
     #[fail(display = "{}", message)]
     IoError {

@@ -14,7 +14,7 @@ impl<'a> ZqColumn<'a> {
     }
 
     #[allow(dead_code)]
-    pub fn name(&self) -> Result<&'a str, ZqError > {
+    pub fn name(&self) -> Result<&'a str, ZqError> {
         Ok(self.name)
     }
 

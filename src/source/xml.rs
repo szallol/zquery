@@ -1,22 +1,22 @@
 use log::*;
 use url::Url;
 
-use std::io;
-use std::fs::File;
-use std::io::BufReader;
 use std::collections::HashMap;
+use std::fs::File;
+use std::io;
+use std::io::BufReader;
 
 use xml::reader::{EventReader, XmlEvent};
 
 use crate::errors::ZqError;
 
-use crate::zquery::column::*;
-use crate::zquery:: {ZqCore, column::*, table::*};
 use crate::source::ZqSource;
+use crate::zquery::column::*;
+use crate::zquery::{column::*, table::*, ZqCore};
 
 pub struct ZqXml {
     url: Url,
-//    tables_info : std::collections::HashMap<&str, >,
+    //    tables_info : std::collections::HashMap<&str, >,
 }
 
 impl ZqXml {
@@ -29,21 +29,17 @@ impl ZqXml {
 impl ZqSource for ZqXml {
     fn import(&self, core: &mut dyn ZqCore) -> Result<(), ZqError> {
         //
-        let mut tmp_columns = vec![
-            ZqColumn::new("id", "INTEGER PRIMARY KEY AUTOINCREMENT"),
-        ];
+        let mut tmp_columns = vec![ZqColumn::new("id", "INTEGER PRIMARY KEY AUTOINCREMENT")];
 
         core.create_table(&ZqTable::new("tmpTable", tmp_columns))?;
 
         let file = self.url.host_str().unwrap();
         let file = format!("{}{}", file, self.url.path());
-        let file = File::open(file).map_err( |e : io::Error |
-            ZqError::IoError {
-                message: String::from("Failed to open database"),
-                backtrace: failure::Backtrace::new(),
-                cause: e
-            }
-        )?;
+        let file = File::open(file).map_err(|e: io::Error| ZqError::IoError {
+            message: String::from("Failed to open database"),
+            backtrace: failure::Backtrace::new(),
+            cause: e,
+        })?;
 
         let file = BufReader::new(file);
 
@@ -53,11 +49,11 @@ impl ZqSource for ZqXml {
 
         for e in parser {
             match e {
-                Ok(XmlEvent::StartElement{name, ..}) => {
+                Ok(XmlEvent::StartElement { name, .. }) => {
                     info!("{}{}", ident, name);
                     ident.push('\t');
                 }
-                Ok(XmlEvent::EndElement{name, ..}) => {
+                Ok(XmlEvent::EndElement { name, .. }) => {
                     ident.pop();
                     info!("{}{}\n\n", ident, name);
                 }
@@ -71,8 +67,12 @@ impl ZqSource for ZqXml {
                 _ => {}
             }
         }
-        info!("xml imported from: {:?}, {:?}", self.url.host_str(), self.url.path());
-//        info!("xml imported from: {:?}", parser);
+        info!(
+            "xml imported from: {:?}, {:?}",
+            self.url.host_str(),
+            self.url.path()
+        );
+        //        info!("xml imported from: {:?}", parser);
         Ok(())
     }
 }

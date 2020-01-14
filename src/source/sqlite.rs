@@ -28,11 +28,11 @@ impl ZqSource for ZqSqlite {
         let db_file = db_file.to_string();
         let db_file = Path::new(&db_file);
 
-        let _conn = Connection::open(db_file).map_err( |e : rusqlite::Error|
-            ZqError::SqLiteError {
+        let _conn =
+            Connection::open(db_file).map_err(|e: rusqlite::Error| ZqError::SqLiteError {
                 message: String::from("Failed to open database"),
                 backtrace: failure::Backtrace::new(),
-                cause: e
+                cause: e,
             })?;
 
         info!("SQLite imported from: {:?}", db_file);
