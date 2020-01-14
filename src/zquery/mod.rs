@@ -40,39 +40,39 @@ impl<'a> ZQuery<'a> {
     }
 
     pub fn run(&mut self) -> Result<()> {
-        let input_values: Vec<_> =  self.args.values_of("input").unwrap().clone().collect();
-        self.add_sources(input_values);
+        let mut input_values =  self.args.values_of("input").unwrap().into_iter();
+        while let Some(input) = input_values.next() {
+            self.add_source(input);
+        }
 
         Ok(())
     }
 
-    pub fn add_sources(&mut self, sources: Vec<&str>) -> Result<()> {
-        sources.into_iter().map(|source| {
-            //            let input_url = Url::parse(source).map_err(|_|
-            //                ZqError::ParseError {message : String::from("Failed to parse source url")}
-            //            );
-        });
+    pub fn add_source(&mut self, input : &str) -> Result<()> {
+        let input_url = Url::parse(input).map_err(|_|
+            ZqError::ParseError {message : String::from("Failed to parse source url")}).unwrap();
 
-        //            match input_url.scheme() {
-        //                "sqlite" => {
-        //                    let new_source = Box::new(ZqSqlite::new(input_url));
-        //                    new_source.import(self.borrow_mut())?;
-        //                    self.inputs.push(new_source);
-        //                }
-        //                "xml" => {
-        //                    let new_source = Box::new(ZqXml::new(input_url));
-        //                    new_source.import(self.borrow_mut())?;
-        //                    self.inputs.push(new_source);
-        //                }
-        //                _ => {}
-        //            };
-        //                Err(err) => {
-        //                    error!("Failed to load input {} : {}", next_input, err);
-        //                }
-        //                _ => {
-        //                }
-        //            }
-        //        };
+        match input_url.scheme() {
+            "sqlite" => {
+                let new_source = Box::new(ZqSqlite::new(input_url));
+                new_source.import(self.borrow_mut())?;
+                self.inputs.push(new_source);
+            }
+            "xml" => {
+                let new_source = Box::new(ZqXml::new(input_url));
+                new_source.import(self.borrow_mut())?;
+                self.inputs.push(new_source);
+            }
+            _ => {}
+        };
+//                        Err(err) => {
+//                            error!("Failed to load input {} : {}", next_input, err);
+//                        }
+//                        _ => {
+//                        }
+//                    }
+//                };
+
         Ok(())
     }
 }

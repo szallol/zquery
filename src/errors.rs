@@ -9,7 +9,9 @@ pub enum ZqError {
     GeneralError { message: String },
 
     #[fail(display = "{}", message)]
-    ParseError { message: String },
+    ParseError {
+        message: String
+    },
 
     #[fail(display = "{}", message)]
     QueryError { message: String },
