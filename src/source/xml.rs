@@ -27,7 +27,7 @@ impl ZqXml {
 }
 
 impl ZqSource for ZqXml {
-    fn import(&self, core: &mut dyn ZqCore) -> Result<(), ZqError> {
+    fn import(&self, core: &dyn ZqCore) -> Result<(), ZqError> {
         //
         let mut tmp_columns = vec![ZqColumn::new("id", "INTEGER PRIMARY KEY AUTOINCREMENT")];
 

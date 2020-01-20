@@ -5,6 +5,7 @@ use log::*;
 use rusqlite::{Connection, ToSql, NO_PARAMS};
 use std::path::Path;
 use url::Url;
+use std::cell::RefCell;
 
 pub mod column;
 pub mod table;
@@ -12,6 +13,7 @@ pub mod table;
 use crate::errors::*;
 use crate::source::{sqlite::ZqSqlite, xml::ZqXml, ZqSource};
 use crate::zquery::table::*;
+use failure::_core::cell::Ref;
 
 pub trait ZqCore {
     fn execute_query(&self, query: &str, params: &[&dyn ToSql]) -> Result<()>;
@@ -19,8 +21,8 @@ pub trait ZqCore {
 }
 
 pub struct ZQuery<'a> {
-    pub args: ArgMatches<'a>,
-    pub inputs: Vec<Box<dyn ZqSource>>,
+    pub args: RefCell<ArgMatches<'a>>,
+    pub inputs: RefCell<Vec<Box<dyn ZqSource>>>,
     conn: rusqlite::Connection,
 }
 
@@ -36,11 +38,14 @@ impl<'a> ZQuery<'a> {
             }
         })?;
 
+        let args = RefCell::new(args);
+        let inputs = RefCell::new(inputs);
         Ok(ZQuery { args, inputs, conn })
     }
 
-    pub fn run(&mut self) -> Result<()> {
-        let mut input_values =  self.args.values_of("input").unwrap().into_iter();
+    pub fn run(&self) -> Result<()> {
+        let args = self.args.borrow();
+        let mut input_values =  args.values_of("input").unwrap().into_iter();
         while let Some(input) = input_values.next() {
             self.add_source(input);
         }
@@ -48,20 +53,22 @@ impl<'a> ZQuery<'a> {
         Ok(())
     }
 
-    pub fn add_source(&mut self, input : &str) -> Result<()> {
+    pub fn add_source(&self, input : &str) -> Result<()> {
         let input_url = Url::parse(input).map_err(|_|
             ZqError::ParseError {message : String::from("Failed to parse source url")}).unwrap();
 
         match input_url.scheme() {
             "sqlite" => {
                 let new_source = Box::new(ZqSqlite::new(input_url));
-                new_source.import(self.borrow_mut())?;
-                self.inputs.push(new_source);
+                new_source.import(self)?;
+                let mut inputs = self.inputs.borrow_mut();
+                inputs.push(new_source);
             }
             "xml" => {
                 let new_source = Box::new(ZqXml::new(input_url));
-                new_source.import(self.borrow_mut())?;
-                self.inputs.push(new_source);
+                new_source.import(self)?;
+                let mut inputs = self.inputs.borrow_mut();
+                inputs.push(new_source);
             }
             _ => {}
         };

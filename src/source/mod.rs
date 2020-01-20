@@ -5,5 +5,5 @@ pub mod sqlite;
 pub mod xml;
 
 pub trait ZqSource {
-    fn import(&self, core: &mut dyn ZqCore) -> Result<()>;
+    fn import(&self, core: &dyn ZqCore) -> Result<()>;
 }
