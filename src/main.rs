@@ -29,9 +29,10 @@ fn main() -> Result<()> {
         )
         .get_matches();
 
-    ZQuery::new(matches).unwrap().run().map_err(|e: ZqError| {
-        println!("{}", e);
-    });
+    match ZQuery::new(matches).unwrap().run() {
+        Err(e) => println!("{}", e),
+        Ok(_) => {}
+    };
 
     Ok(())
 }

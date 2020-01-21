@@ -1,11 +1,10 @@
-use clap::{ArgMatches, Values};
-use core::borrow::BorrowMut;
+use clap::ArgMatches;
 use failure::Backtrace;
 use log::*;
 use rusqlite::{Connection, ToSql, NO_PARAMS};
+use std::cell::RefCell;
 use std::path::Path;
 use url::Url;
-use std::cell::RefCell;
 
 pub mod column;
 pub mod table;
@@ -13,7 +12,6 @@ pub mod table;
 use crate::errors::*;
 use crate::source::{sqlite::ZqSqlite, xml::ZqXml, ZqSource};
 use crate::zquery::table::*;
-use failure::_core::cell::Ref;
 
 pub trait ZqCore {
     fn execute_query(&self, query: &str, params: &[&dyn ToSql]) -> Result<()>;
@@ -45,17 +43,20 @@ impl<'a> ZQuery<'a> {
 
     pub fn run(&self) -> Result<()> {
         let args = self.args.borrow();
-        let mut input_values =  args.values_of("input").unwrap().into_iter();
+        let mut input_values = args.values_of("input").unwrap().into_iter();
         while let Some(input) = input_values.next() {
-            self.add_source(input);
+            self.add_source(input)?;
         }
 
         Ok(())
     }
 
-    pub fn add_source(&self, input : &str) -> Result<()> {
-        let input_url = Url::parse(input).map_err(|_|
-            ZqError::ParseError {message : String::from("Failed to parse source url")}).unwrap();
+    pub fn add_source(&self, input: &str) -> Result<()> {
+        let input_url = Url::parse(input)
+            .map_err(|_| ZqError::ParseError {
+                message: String::from("Failed to parse source url"),
+            })
+            .unwrap();
 
         match input_url.scheme() {
             "sqlite" => {
@@ -72,13 +73,13 @@ impl<'a> ZQuery<'a> {
             }
             _ => {}
         };
-//                        Err(err) => {
-//                            error!("Failed to load input {} : {}", next_input, err);
-//                        }
-//                        _ => {
-//                        }
-//                    }
-//                };
+        //                        Err(err) => {
+        //                            error!("Failed to load input {} : {}", next_input, err);
+        //                        }
+        //                        _ => {
+        //                        }
+        //                    }
+        //                };
 
         Ok(())
     }

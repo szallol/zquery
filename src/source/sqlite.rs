@@ -1,6 +1,6 @@
 use crate::errors::*;
 use crate::source::ZqSource;
-use crate::zquery::{ZQuery, ZqCore};
+use crate::zquery::ZqCore;
 
 //use rusqlite::types::ToSql;
 use rusqlite::Connection;
@@ -21,7 +21,7 @@ impl ZqSqlite {
 }
 
 impl ZqSource for ZqSqlite {
-    fn import(&self, core: &dyn ZqCore) -> Result<()> {
+    fn import(&self, _core: &dyn ZqCore) -> Result<()> {
         let mut db_file = self.url.host_str().unwrap().to_owned();
         let path = self.url.path();
         db_file.push_str(path);

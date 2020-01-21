@@ -1,7 +1,6 @@
 use log::*;
 use url::Url;
 
-use std::collections::HashMap;
 use std::fs::File;
 use std::io;
 use std::io::BufReader;
@@ -12,7 +11,7 @@ use crate::errors::ZqError;
 
 use crate::source::ZqSource;
 use crate::zquery::column::*;
-use crate::zquery::{column::*, table::*, ZqCore};
+use crate::zquery::{table::*, ZqCore};
 
 pub struct ZqXml {
     url: Url,
@@ -29,7 +28,7 @@ impl ZqXml {
 impl ZqSource for ZqXml {
     fn import(&self, core: &dyn ZqCore) -> Result<(), ZqError> {
         //
-        let mut tmp_columns = vec![ZqColumn::new("id", "INTEGER PRIMARY KEY AUTOINCREMENT")];
+        let tmp_columns = vec![ZqColumn::new("id", "INTEGER PRIMARY KEY AUTOINCREMENT")];
 
         core.create_table(&ZqTable::new("tmpTable", tmp_columns))?;
 

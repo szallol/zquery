@@ -11,3 +11,5 @@ Cargo.lock
 .idea/*
 .vscode/*
 rkspace.xml
+*.db
+.idea/workspace.xml
