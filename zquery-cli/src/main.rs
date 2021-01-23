@@ -1,17 +1,10 @@
-#[macro_use]
-extern crate failure;
-
+use simple_logger::SimpleLogger;
+use anyhow::Result;
 use clap::{App, Arg};
-
-mod errors;
-mod source;
-mod zquery;
-
-pub use errors::*;
-use zquery::ZQuery;
-
+use zquery_core::ZQuery;
+    
 fn main() -> Result<()> {
-    let _logger = simple_logger::init().map_err(|_| println!("Failed to init log system."));
+     SimpleLogger::new().init().unwrap();
 
     let matches = App::new("zq")
         .version("0.1.0")
@@ -29,10 +22,12 @@ fn main() -> Result<()> {
         )
         .get_matches();
 
-    match ZQuery::new(matches).unwrap().run() {
-        Err(e) => println!("{}", e),
-        Ok(_) => {}
-    };
+    let zq = ZQuery{};
+
+    //match ZQuery::new(matches).unwrap().run() {
+        //Err(e) => println!("{}", e),
+        //Ok(_) => {}
+    //};
 
     Ok(())
 }

@@ -1,4 +1,4 @@
-use failure::{Backtrace, Fail};
+use thiserror::Error;
 use std::io;
 
 pub type Result<T> = std::result::Result<T, ZqError>;
