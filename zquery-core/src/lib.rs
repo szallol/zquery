@@ -1,6 +1,6 @@
 // use std::thread;
 // use std::sync::mpsc::channel;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 mod db;
 mod errors;
@@ -16,7 +16,7 @@ pub struct ZqIngest{
 }
 
 pub struct ZqDone {
-    _db : Db,
+    db : Db,
 }
 
 impl Zq {
@@ -32,7 +32,14 @@ impl ZqIngest {
     }
     
     pub fn execute_query (self, _query : String) -> Result<ZqDone, ZqError> {
-        Ok(ZqDone{_db : self.db})
+        Ok(ZqDone{db : self.db})
     }
 
+}
+
+impl ZqDone {
+    pub fn export(self, _destinations : &PathBuf) {
+        println!("export done");
+        self.db.stop_worker();
+    } 
 }

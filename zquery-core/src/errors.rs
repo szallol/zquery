@@ -7,7 +7,8 @@ use rusqlite;
 #[derive(Error, Debug)]
 pub enum ZqError {
     #[error("db error")]
-    Db (#[from] rusqlite::Error)
+    Db (#[from] rusqlite::Error),
+
     // #[fail(display = "{}", message)]
     // GeneralError { message: String },
 
