@@ -2,7 +2,7 @@ use std::fs;
 
 pub fn sample_inputs() -> Vec<String>
 {
-    let mut ret_inputs = Vec::new();
+    let ret_inputs = Vec::new();
 
     let paths = fs::read_dir("../sample_inputs").unwrap();
 

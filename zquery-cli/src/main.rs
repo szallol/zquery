@@ -1,7 +1,7 @@
 use simple_logger::SimpleLogger;
 use anyhow::Result;
 use clap::{App, Arg};
-use zquery_core::ZQuery;
+use zquery_core::Zq;
     
 fn main() -> Result<()> {
      SimpleLogger::new().init().unwrap();
@@ -23,7 +23,7 @@ fn main() -> Result<()> {
         .get_matches();
 
 
-    let _zq = ZQuery{};
+    let _zq = Zq::new();
     println!("{:?}", matches);
 
     //match ZQuery::new(matches).unwrap().run() {
