@@ -22,7 +22,9 @@ fn main() -> Result<()> {
         )
         .get_matches();
 
-    let zq = ZQuery{};
+
+    let _zq = ZQuery{};
+    println!("{:?}", matches);
 
     //match ZQuery::new(matches).unwrap().run() {
         //Err(e) => println!("{}", e),
