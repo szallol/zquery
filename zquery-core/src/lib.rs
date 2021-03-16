@@ -4,25 +4,29 @@ use std::path::{Path, PathBuf};
 
 mod db;
 mod errors;
+pub mod config;
 
 use db::Db;
 use errors::ZqError;
+use config::Config;
 
 pub struct Zq {
 }
 
 pub struct ZqIngest{
     db : Db,
+    config : Config,
 }
 
 pub struct ZqDone {
     db : Db,
+    config : Config,
 }
 
 impl Zq {
-    pub fn new() -> Result<ZqIngest, ZqError> {
+    pub fn new(config: Config) -> Result<ZqIngest, ZqError> {
         let db = Db::new()?;
-        Ok(ZqIngest{db})
+        Ok(ZqIngest{db, config})
     }
 }
 
@@ -32,7 +36,7 @@ impl ZqIngest {
     }
     
     pub fn execute_query (self, _query : String) -> Result<ZqDone, ZqError> {
-        Ok(ZqDone{db : self.db})
+        Ok(ZqDone{db : self.db, config: self.config})
     }
 
 }
