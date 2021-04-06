@@ -40,8 +40,10 @@ fn main() -> Result<()> {
     let input_strs = matches.values_of("input").unwrap();
     let config_inputs = InputConfig::from_strs(input_strs.collect())?; 
 
-    let output_str = matches.value_of("input").unwrap(); 
-    let config_output = OutputConfig::from_str(output_str)?;
+    let mut config_output = None;
+    if let Some(output_str) = matches.value_of("output") {
+        config_output = Some(OutputConfig::from_str(output_str)?);
+    }
 
     let config = Config::new(config_inputs, config_output);
 

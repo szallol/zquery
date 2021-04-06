@@ -43,7 +43,10 @@ impl ZqIngest {
 
 impl ZqDone {
     pub fn export(self, _destinations : &PathBuf) {
-        println!("export done");
+        if let Some(output) = self.config.output() {
+            println!("export done: {}", output);
+        }
+
         self.db.stop_worker();
     } 
 }

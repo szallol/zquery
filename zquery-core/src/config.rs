@@ -1,18 +1,22 @@
 // use serde::{Serialize, Deserialize};
 use url::{Url};
 use crate::errors;
+use std::fmt;
 
 use errors::Result;
 
 #[derive(serde::Serialize)]
 pub struct Config {
     inputs : Vec<InputConfig>,
-    output : OutputConfig,
+    output : Option<OutputConfig>,
 }
 
 impl Config {
-    pub fn new(inputs: Vec<InputConfig>, output: OutputConfig) -> Self { Self { inputs, output } }
+    pub fn new(inputs: Vec<InputConfig>, output: Option<OutputConfig>) -> Self { Self { inputs, output } }
+
+    pub fn output(&self) -> &Option<OutputConfig> {&self.output}
 }
+
 #[derive(serde::Serialize)]
 pub struct InputConfig {
     url : Url,
@@ -56,6 +60,12 @@ impl OutputConfig {
 
     pub fn from_str(str_url : &str) -> Result<OutputConfig> {
         Ok(OutputConfig::new(Url::parse(str_url)?))
+    }
+}
+
+impl fmt::Display for OutputConfig {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.url.as_str())
     }
 }
 
