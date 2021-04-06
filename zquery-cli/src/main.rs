@@ -3,8 +3,7 @@ use anyhow::Result;
 use std::path::{Path, PathBuf};
 use clap::{App, Arg};
 use zquery_core::Zq;
-use zquery_core::config::{InputConfig, Config};
-use url::{Url};
+use zquery_core::config::{InputConfig, OutputConfig, Config};
     
 fn main() -> Result<()> {
      SimpleLogger::new().init().unwrap();
@@ -21,6 +20,16 @@ fn main() -> Result<()> {
                 .help("Input source")
                 .multiple(true)
                 .required(true)
+                .takes_value(true)
+                )
+        .arg(
+            Arg::with_name("output")
+                .short("o")
+                .long("output")
+                .value_name("OUTPUT")
+                .help("Output destination")
+                .multiple(false)
+                .required(false)
                 .takes_value(true),
         )
         .get_matches();
@@ -28,13 +37,13 @@ fn main() -> Result<()> {
     let mut export_paths = PathBuf::new();
     export_paths.push("dummy.db");
     
-    let config_inputs = matches.values_of("input").unwrap()
-        .map(|url_str| Url::parse(url_str))
-        .filter(|url_parsed| url_parsed.is_ok())
-        .map(|url_ok| InputConfig::new(url_ok.unwrap()))
-        .collect();
+    let input_strs = matches.values_of("input").unwrap();
+    let config_inputs = InputConfig::from_strs(input_strs.collect())?; 
 
-    let config = Config::new(config_inputs);
+    let output_str = matches.value_of("input").unwrap(); 
+    let config_output = OutputConfig::from_str(output_str)?;
+
+    let config = Config::new(config_inputs, config_output);
 
     let zq = Zq::new(config)?;
     zq.import(Path::new("dummy"));

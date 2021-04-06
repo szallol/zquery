@@ -1,8 +1,9 @@
 use thiserror::Error;
 use rusqlite;
+use url;
 // use std::io;
 
-// pub type Result<T> = std::result::Result<T, ZqError>;
+pub type Result<T> = std::result::Result<T, ZqError>;
 
 #[derive(Error, Debug)]
 pub enum ZqError {
@@ -12,10 +13,13 @@ pub enum ZqError {
     // #[fail(display = "{}", message)]
     // GeneralError { message: String },
 
-    // #[fail(display = "{}", message)]
-    // ParseError {
-    //     message: String
-    // },
+     #[error("Parse error")]
+    Parse(#[from] url::ParseError),
+
+     //#[fail(display = "{}", message)]
+     //ParseError {
+         //message: String
+     //},
 
     // #[fail(display = "{}", message)]
     // QueryError { message: String },
