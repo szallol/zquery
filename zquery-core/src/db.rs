@@ -50,7 +50,7 @@ impl DbWorker {
 
 impl Db {
     pub fn new() -> Result<Db, ZqError> {
-        let conn = Connection::open(Path::new("tmpdb.db"))?;
+        let conn = Connection::open(Path::new("tmpdb.db")).map_err(ZqError::Db)?;
 
         let (tx, rx) = channel::<DbMsg>();
         let worker = DbWorker::new(rx);
@@ -64,7 +64,7 @@ impl Db {
     }
 
     pub fn _db_version(&self) -> Result<String, ZqError> { 
-        let version = self._db_conn.query_row("SELECT sqlite_version()", NO_PARAMS, |row| row.get(0))?;
+        let version = self._db_conn.query_row("SELECT sqlite_version()", NO_PARAMS, |row| row.get(0)).map_err(ZqError::Db)?;
         Ok(version)
     }
 

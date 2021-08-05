@@ -1,6 +1,6 @@
 use crate::errors::*;
 use crate::source::ZqSource;
-use crate::zquery::ZqCore;
+// use crate::zquery::ZqCore;
 
 //use rusqlite::types::ToSql;
 use rusqlite::Connection;
@@ -8,6 +8,7 @@ use rusqlite::Connection;
 use log::*;
 use std::path::Path;
 use url::Url;
+use crate::Zq;
 
 pub struct ZqSqlite {
     url: Url,
@@ -21,7 +22,7 @@ impl ZqSqlite {
 }
 
 impl ZqSource for ZqSqlite {
-    fn import(&self, _core: &dyn ZqCore) -> Result<()> {
+    fn import(&self, _core: &Zq) -> Result<()> {
         let mut db_file = self.url.host_str().unwrap().to_owned();
         let path = self.url.path();
         db_file.push_str(path);
@@ -29,11 +30,7 @@ impl ZqSource for ZqSqlite {
         let db_file = Path::new(&db_file);
 
         let _conn =
-            Connection::open(db_file).map_err(|e: rusqlite::Error| ZqError::SqLiteError {
-                message: String::from("Failed to open database"),
-                backtrace: failure::Backtrace::new(),
-                cause: e,
-            })?;
+            Connection::open(db_file).map_err(ZqError::Db)?;
 
         info!("SQLite imported from: {:?}", db_file);
         Ok(())

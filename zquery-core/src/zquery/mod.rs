@@ -8,6 +8,7 @@ use url::Url;
 
 pub mod column;
 pub mod table;
+pub mod sources;
 
 use crate::errors::*;
 use crate::source::{sqlite::ZqSqlite, xml::ZqXml, ZqSource};

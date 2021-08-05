@@ -5,12 +5,17 @@ use std::path::{Path, PathBuf};
 mod db;
 mod errors;
 pub mod config;
+pub mod source;
 
 use db::Db;
 use errors::ZqError;
 use config::Config;
+use source::ZqSource;
 
 pub struct Zq {
+    db : Db,
+    config : Config,
+    // inputs : Vec<Box<dyn ZqSource>>,
 }
 
 pub struct ZqIngest{
@@ -24,18 +29,24 @@ pub struct ZqDone {
 }
 
 impl Zq {
-    pub fn new(config: Config) -> Result<ZqIngest, ZqError> {
+    pub fn new(config: Config) -> Result<Zq, ZqError> {
         let db = Db::new()?;
-        Ok(ZqIngest{db, config})
+        Ok(Zq{db, config})
     }
+
+    pub fn import(self) -> Result<ZqIngest, ZqError> {
+        Ok(ZqIngest{db: self.db, config: self.config})
+    }
+    
 }
 
 impl ZqIngest {
-    pub fn import(&self,  _source_path : &Path) {
-
-    }
-    
-    pub fn execute_query (self, _query : String) -> Result<ZqDone, ZqError> {
+    pub fn execute_query (self, query : String) -> Result<ZqDone, ZqError> {
+        // self.db
+        //     .execute(query, params)
+        //     .map_err(|_| ZqError::QueryError {
+        //         message: String::from("Failed to execute query"),
+        //     })?;
         Ok(ZqDone{db : self.db, config: self.config})
     }
 

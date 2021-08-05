@@ -48,9 +48,9 @@ fn main() -> Result<()> {
     let config = Config::new(config_inputs, config_output);
 
     let zq = Zq::new(config)?;
-    zq.import(Path::new("dummy"));
-    zq.execute_query(String::from("SELECT sqlite_version()"))?
-    .export(&export_paths);
+    zq.import()?
+        .execute_query(String::from("SELECT sqlite_version()"))?
+        .export(&export_paths);
 
     //match ZQuery::new(matches).unwrap().run() {
         //Err(e) => println!("{}", e),

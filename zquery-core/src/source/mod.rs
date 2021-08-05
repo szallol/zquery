@@ -1,9 +1,9 @@
-// use crate::errors::*;
-// use crate::zquery::ZqCore;
+use crate::errors::*;
+use crate::Zq;
 
 pub mod sqlite;
 pub mod xml;
 
 pub trait ZqSource {
-    fn import(&self, core: &dyn ZqCore) -> Result<()>;
+    fn import(&self, core: &Zq) -> Result<()>;
 }

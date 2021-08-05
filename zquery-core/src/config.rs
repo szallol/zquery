@@ -1,9 +1,7 @@
 // use serde::{Serialize, Deserialize};
 use url::{Url};
-use crate::errors;
+use crate::errors::{Result, ZqError};
 use std::fmt;
-
-use errors::Result;
 
 #[derive(serde::Serialize)]
 pub struct Config {
@@ -59,7 +57,7 @@ impl OutputConfig {
     }
 
     pub fn from_str(str_url : &str) -> Result<OutputConfig> {
-        Ok(OutputConfig::new(Url::parse(str_url)?))
+        Ok(OutputConfig::new(Url::parse(str_url).map_err(ZqError::Parse)?))
     }
 }
 

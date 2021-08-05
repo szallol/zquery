@@ -8,10 +8,8 @@ use std::io::BufReader;
 use xml::reader::{EventReader, XmlEvent};
 
 use crate::errors::ZqError;
-
 use crate::source::ZqSource;
-use crate::zquery::column::*;
-use crate::zquery::{table::*, ZqCore};
+use crate::Zq;
 
 pub struct ZqXml {
     url: Url,
@@ -26,19 +24,15 @@ impl ZqXml {
 }
 
 impl ZqSource for ZqXml {
-    fn import(&self, core: &dyn ZqCore) -> Result<(), ZqError> {
+    fn import(&self, core: &Zq) -> Result<(), ZqError> {
         //
-        let tmp_columns = vec![ZqColumn::new("id", "INTEGER PRIMARY KEY AUTOINCREMENT")];
+        // let tmp_columns = vec![ZqColumn::new("id", "INTEGER PRIMARY KEY AUTOINCREMENT")];
 
-        core.create_table(&ZqTable::new("tmpTable", tmp_columns))?;
+        // core.create_table(&ZqTable::new("tmpTable", tmp_columns))?;
 
         let file = self.url.host_str().unwrap();
         let file = format!("{}{}", file, self.url.path());
-        let file = File::open(file).map_err(|e: io::Error| ZqError::IoError {
-            message: String::from("Failed to open database"),
-            backtrace: failure::Backtrace::new(),
-            cause: e,
-        })?;
+        let file = File::open(file).map_err(ZqError::IoError)?;
 
         let file = BufReader::new(file);
 
