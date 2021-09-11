@@ -13,7 +13,7 @@ pub enum DbMsg {
 type DbSender = Sender<DbMsg>;
 
 pub struct Db {
-    _db_conn: Connection,
+    db_conn: Connection,
     _tx: DbSender,
     worker: DbWorker,
 }
@@ -57,7 +57,7 @@ impl Db {
         let (tx, rx) = channel::<DbMsg>();
         let worker = DbWorker::new(rx);
         let db = Db {
-            _db_conn: conn,
+            db_conn: conn,
             _tx: tx,
             worker: worker,
         };
@@ -71,7 +71,7 @@ impl Db {
 
     pub fn db_version(&self) -> Result<String> {
         let version = self
-            ._db_conn
+            .db_conn
             .query_row("SELECT sqlite_version()", NO_PARAMS, |row| row.get(0))
             .map_err(ZqError::Db)?;
 
@@ -83,8 +83,11 @@ impl Db {
         self.worker.wait();
     }
 
-    pub fn execute_query(&self, _query : &str) -> Result<()>
-    {
-        todo!();
+    pub fn execute_query(&self, query: &str) -> Result<()> {
+        self.db_conn
+            .execute(query, NO_PARAMS)
+            .map_err(ZqError::Db)?;
+
+        Ok(())
     }
 }
