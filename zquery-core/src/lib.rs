@@ -47,9 +47,10 @@ impl Zq {
 }
 
 impl ZqIngest {
-    pub fn execute_query(self, query : &str) -> Result<ZqDone> {
-        self.zq.db
-            .execute_query(query)?;
+    pub fn execute_query(self, query: &str) -> Result<ZqDone> {
+        let column_names = self.zq.db.execute_query(query)?;
+
+        println!("query column names: {:?}", column_names);
 
         Ok(ZqDone { zq: self.zq })
     }

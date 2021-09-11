@@ -1,9 +1,10 @@
 use super::errors::{Result, ZqError};
 use rusqlite::{Connection, NO_PARAMS};
+use std::fmt::Error;
 use std::path::Path;
 use std::sync::atomic::AtomicBool;
 use std::sync::mpsc::{channel, Receiver, Sender};
-use std::thread;
+use std::{thread, vec};
 
 #[derive(Debug)]
 pub enum DbMsg {
@@ -14,7 +15,7 @@ type DbSender = Sender<DbMsg>;
 
 pub struct Db {
     db_conn: Connection,
-    _tx: DbSender,
+    tx: DbSender,
     worker: DbWorker,
 }
 
@@ -58,7 +59,7 @@ impl Db {
         let worker = DbWorker::new(rx);
         let db = Db {
             db_conn: conn,
-            _tx: tx,
+            tx,
             worker: worker,
         };
 
@@ -66,7 +67,7 @@ impl Db {
     }
 
     pub fn _get_sender(&self) -> DbSender {
-        self._tx.clone()
+        self.tx.clone()
     }
 
     pub fn db_version(&self) -> Result<String> {
@@ -79,15 +80,19 @@ impl Db {
     }
 
     pub fn stop_worker(self) {
-        self._tx.send(DbMsg::Stop).unwrap();
+        self.tx.send(DbMsg::Stop).unwrap();
         self.worker.wait();
     }
 
-    pub fn execute_query(&self, query: &str) -> Result<()> {
-        self.db_conn
-            .execute(query, NO_PARAMS)
-            .map_err(ZqError::Db)?;
+    pub fn execute_query(&self, query: &str) -> Result<Vec<String>> {
+        let mut stmt = self.db_conn.prepare(query).map_err(ZqError::DbQuery)?;
+        let rows = stmt.query(NO_PARAMS).map_err(ZqError::DbQuery)?;
 
-        Ok(())
+        if let Some(names) = rows.column_names() {
+            let names_string = names.iter().map(|x| x.to_string()).collect();
+            return Ok(names_string);
+        }
+
+        Err(ZqError::DbGetColumnNames())
     }
 }
