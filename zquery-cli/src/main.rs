@@ -1,6 +1,7 @@
 use simple_logger::SimpleLogger;
 use anyhow::Result;
-use std::path::{Path, PathBuf};
+// use std::path::{Path, PathBuf};
+use std::path::{PathBuf};
 use clap::{App, Arg};
 use zquery_core::Zq;
 use zquery_core::config::{InputConfig, OutputConfig, Config};
@@ -49,8 +50,8 @@ fn main() -> Result<()> {
 
     let zq = Zq::new(config)?;
     zq.import()?
-        .execute_query(String::from("SELECT sqlite_version()"))?
-        .export(&export_paths);
+        .execute_query("SELECT sqlite_version()")?
+        .export(&export_paths)?;
 
     //match ZQuery::new(matches).unwrap().run() {
         //Err(e) => println!("{}", e),

@@ -2,7 +2,7 @@ use log::*;
 use url::Url;
 
 use std::fs::File;
-use std::io;
+// use std::io;
 use std::io::BufReader;
 
 use xml::reader::{EventReader, XmlEvent};
@@ -24,7 +24,7 @@ impl ZqXml {
 }
 
 impl ZqSource for ZqXml {
-    fn import(&self, core: &Zq) -> Result<(), ZqError> {
+    fn import(&self, _core: &Zq) -> Result<(), ZqError> {
         //
         // let tmp_columns = vec![ZqColumn::new("id", "INTEGER PRIMARY KEY AUTOINCREMENT")];
 

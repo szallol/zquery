@@ -2,8 +2,6 @@ use thiserror::Error;
 use rusqlite;
 use url;
 
-pub type Result<T> = std::result::Result<T, ZqError>;
-
 #[derive(Error, Debug)]
 pub enum ZqError {
     #[error("db error")]
@@ -21,3 +19,5 @@ pub enum ZqError {
     #[error("Io Error")]
     IoError( #[source] std::io::Error),
 }
+
+pub type Result<T> = std::result::Result<T, ZqError>;

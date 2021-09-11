@@ -1,63 +1,69 @@
 // use std::thread;
 // use std::sync::mpsc::channel;
-use std::path::{Path, PathBuf};
+// use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
-mod db;
-mod errors;
 pub mod config;
+mod db;
+pub mod destination;
+mod errors;
 pub mod source;
 
-use db::Db;
-use errors::ZqError;
 use config::Config;
-use source::ZqSource;
+use db::Db;
+use destination::ZqDestinationPool;
+use errors::Result;
+use source::ZqSourcePool;
 
 pub struct Zq {
-    db : Db,
-    config : Config,
-    // inputs : Vec<Box<dyn ZqSource>>,
+    db: Db,
+    config: Config,
+    _sources: Option<ZqSourcePool>,
+    _destinations: Option<ZqDestinationPool>,
 }
 
-pub struct ZqIngest{
-    db : Db,
-    config : Config,
+pub struct ZqIngest {
+    zq: Zq,
 }
 
 pub struct ZqDone {
-    db : Db,
-    config : Config,
+    zq: Zq,
 }
 
 impl Zq {
-    pub fn new(config: Config) -> Result<Zq, ZqError> {
+    pub fn new(config: Config) -> Result<Zq> {
         let db = Db::new()?;
-        Ok(Zq{db, config})
+        Ok(Zq {
+            db,
+            config,
+            _sources: None,
+            _destinations: None,
+        })
     }
 
-    pub fn import(self) -> Result<ZqIngest, ZqError> {
-        Ok(ZqIngest{db: self.db, config: self.config})
+    pub fn import(self) -> Result<ZqIngest> {
+        Ok(ZqIngest { zq: self })
     }
-    
 }
 
 impl ZqIngest {
-    pub fn execute_query (self, query : String) -> Result<ZqDone, ZqError> {
-        // self.db
-        //     .execute(query, params)
-        //     .map_err(|_| ZqError::QueryError {
-        //         message: String::from("Failed to execute query"),
-        //     })?;
-        Ok(ZqDone{db : self.db, config: self.config})
-    }
+    pub fn execute_query(self, query : &str) -> Result<ZqDone> {
+        self.zq.db
+            .execute_query(query)?;
 
+        Ok(ZqDone { zq: self.zq })
+    }
 }
 
 impl ZqDone {
-    pub fn export(self, _destinations : &PathBuf) {
-        if let Some(output) = self.config.output() {
+    pub fn export(self, _destinations: &PathBuf) -> Result<()> {
+        if let Some(output) = self.zq.config.output() {
             println!("export done: {}", output);
         }
 
-        self.db.stop_worker();
-    } 
+        println!("db version: {}", self.zq.db.db_version()?);
+        self.zq.db.stop_worker();
+
+        Ok(())
+    }
 }
